@@ -10,9 +10,9 @@
 title: |-
   Github release
 summary: |
-  Step for creating an release on the current Github repository whith the ability to add changelogs and binaries
+  Step for creating an release on the current Github repository.
 description: |
-  Create a release on Github. Push che
+  Create a release on Github. Add changelog and binaries.
 website: https://github.com/AndroidGuyDD/lovoo/bitrise-step-github-release
 source_code_url: https://github.com/AndroidGuyDD/lovoo/bitrise-step-github-release
 support_url: https://github.com/AndroidGuyDD/lovoo/bitrise-step-github-release/issues
@@ -44,7 +44,7 @@ host_os_tags:
 type_tags:
   - utility
 
-is_requires_admin_user: true
+is_requires_admin_user: false
 is_always_run: false
 is_skippable: false
 run_if: ""
@@ -57,31 +57,91 @@ deps:
   - name: git
   - name: wget
 
-
 toolkit:
-  bash:
-    entry_file: step.sh
-
+  go:
+    package_name: github.com/lovoo/bitrise-step-github-release
 
 inputs:
-  - example_step_input: Default Value - you can leave this empty if you want to
+  - github_auth_token: ""
     opts:
-      title: "Example Step Input"
-      summary: Summary. No more than 2-3 sentences.
-      description: |
-        Description of this input.
+      title: "GitHub auth token"
+      summary: ""
+      description: |-
+        Authorization token for GitHub applications
+        You can create one for yourself at the following url:
+        [https://github.com/settings/tokens](https://github.com/settings/tokens)
 
-        Can be Markdown formatted text.
+        Add repo and public_repo scope to the generated token, to allow to creating releases tp private repos and public repos respectively.
       is_expand: true
       is_required: true
-      value_options: []
+  - repository_url: "$GIT_REPOSITORY_URL"
+    opts:
+      title: "Repository URL"
+      summary: ""
+      description: |-
+        The URL for the repository we are working with
+      is_required: true
+      is_expand: true
+  - changelog_file_list: ""
+    opts:
+      title: "List of files that contain change notes"
+      summary: ""
+      description: |-
+        Specify file(s) which contain change notes and seprate with | symbol when added more than one file path
+      is_required: true
+  - release_tag: "$BITRISE_BUILD_NUMBER"
+    opts:
+      title: "The name of the tag, which will be created on the current branch"
+      summary: ""
+      description: |-
+        Specify a name for the tag.
+      is_required: true
+  - release_name: "release_$BITRISE_BUILD_NUMBER"
+    opts:
+      title: "The name of release"
+      summary: ""
+      description: |-
+        Specify a name for the release (will be used as the headline). 
+      is_required: true
+  - target_commitish: ""
+    opts:
+      title: "Branch name or commit hash"
+      summary: ""
+      description: |-
+          Specifies the commitish value that determines where the Git tag is created from. Can be any branch or commit SHA.
+      is_required: false
+  - is_draft: "false"
+    opts:
+      title: "Is the release a draft?"
+      summary: ""
+      description: |-
+        If it's a draft, set to `true`.
+      is_required: false
+      value_options:
+      - "true"
+      - "false"
+  - is_prerelease: "false"
+    opts:
+      title: "Is it a prerelease"
+      summary: ""
+      description: |-
+        If it's a prerelease, set to `true`
+      is_required: false
+      value_options:
+      - "true"
+      - "false"
+  - upload_asset_file: ""
+    opts:
+      title: "The file that should be attached to this release as asset."
+      summary: ""
+      description: |-
+        Specify the relative path from your project root for the file that should be uploaded as asset for this release. 
+      is_required: false
 
 outputs:
-  - EXAMPLE_STEP_OUTPUT:
+  - RELEASE_URL:
     opts:
-      title: "Example Step Output"
-      summary: Summary. No more than 2-3 sentences.
+      title: "The link to the created GitHub release"
+      summary: ""
       description: |
-        Description of this output.
-
-        Can be Markdown formatted text.
+        URL of the created release on Github.

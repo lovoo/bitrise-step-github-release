@@ -127,7 +127,7 @@ func collectReleaseNotes(files string) string {
 		}
 
 		if i > 0 {
-			buffer.WriteString("\n")
+			buffer.WriteString("\n\n")
 		}
 
 		buffer.Write(fileContent)
